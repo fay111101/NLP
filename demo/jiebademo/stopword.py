@@ -14,7 +14,7 @@ from os import path
 d = path.dirname(__file__)
 stopwords_path = 'stopwords\stopwords1893.txt' # 停用词词表
 
-text_path = 'data/test.txt' #设置要分析的文本路径
+text_path = '../data/test.txt' #设置要分析的文本路径
 text = open(path.join(d, text_path)).read()
 
 def jiebaclearText(text):

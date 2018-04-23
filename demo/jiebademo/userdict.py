@@ -8,14 +8,16 @@
 @Software: PyCharm
 """
 
+
+
 """
 添加自定义词库，可以增加分词的准确性
 """
-from __future__ import print_function, unicode_literals
+# from __future__ import print_function, unicode_literals
 import sys
 sys.path.append("../")
 import jieba
-jieba.load_userdict("./data/userdict.txt")
+jieba.load_userdict("../data/userdict.txt")
 import jieba.posseg as pseg
 
 jieba.add_word('石墨烯')

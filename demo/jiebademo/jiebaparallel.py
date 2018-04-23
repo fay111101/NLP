@@ -9,6 +9,8 @@
 """
 import sys
 import time
+import os
+print(os.name)
 sys.path.append("../../")
 import jieba
 
@@ -16,7 +18,7 @@ jieba.enable_parallel() # 关闭并行分词
 jieba.enable_parallel(4) # 开启并行分词模式，参数为并行进程数
 
 # url = sys.argv[1]
-url='./data/test.txt'
+url='../data/test.txt'
 content = open(url,"rb").read()
 t1 = time.time()
 words = "/ ".join(jieba.cut(content))
