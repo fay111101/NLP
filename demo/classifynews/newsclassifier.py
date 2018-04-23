@@ -15,16 +15,15 @@ import nltk  #处理英文
 import sklearn
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
-import pylab as pl
 import matplotlib.pyplot as plt
 
-#粗暴的词去重
+#统计文章中出现的词语
 def make_word_set(words_file):
     words_set = set()
     with open(words_file, 'r') as fp:
         for line in fp.readlines():
             word = line.strip()
-            if len(word)>0 and word not in words_set: # 去重
+            if len(word)>0 and word not in words_set:
                 words_set.add(word)
     return words_set
 
@@ -53,11 +52,11 @@ def text_processing(folder_path, test_size=0.2):
             word_list = list(word_cut)  # genertor转化为list
             jieba.disable_parallel()  # 关闭并行分词模式
 
-            data_list.append(word_list)  # 训练集list
+            data_list.append(word_list)  #
             class_list.append(folder)  # 类别
             j += 1
 
-    ## 粗暴地划分训练集和测试集
+    ## 划分训练集和测试集
     data_class_list = list(zip(data_list, class_list))
     random.shuffle(data_class_list)
     index = int(len(data_class_list) * test_size) + 1
@@ -88,6 +87,8 @@ def text_processing(folder_path, test_size=0.2):
 
 def words_dict(all_words_list, deleteN, stopwords_set=set()):
     # 选取特征词
+    # deleteN 用于选取词语指定选词的选定范围
+    # print(all_words_list)
     feature_words = []
     n = 1
     for t in range(deleteN, len(all_words_list), 1):
@@ -152,8 +153,11 @@ flag = 'sklearn'
 deleteNs = range(0, 1000, 20)
 test_accuracy_list = []
 for deleteN in deleteNs:
+    print(deleteN)
     # feature_words = words_dict(all_words_list, deleteN)
     feature_words = words_dict(all_words_list, deleteN, stopwords_set)
+    print(feature_words)
+    print(len(feature_words))
     train_feature_list, test_feature_list = text_features(train_data_list, test_data_list, feature_words, flag)
     test_accuracy = text_classifier(train_feature_list, test_feature_list, train_class_list, test_class_list, flag)
     test_accuracy_list.append(test_accuracy)
