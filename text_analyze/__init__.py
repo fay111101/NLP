@@ -1,7 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-@Time    : 18-4-23 下午4:51
+@Time    : 18-5-29 下午12:56
 @Author  : fay
 @Email   : fay625@sina.cn
 @File    : __init__.py.py

@@ -8,28 +8,36 @@
 @Software: PyCharm
 """
 import os
-import time
 import random
-import jieba  #处理中文
-import nltk  #处理英文
-import sklearn
-from sklearn.naive_bayes import MultinomialNB
-import numpy as np
-import matplotlib.pyplot as plt
 
-#统计文章中出现的词语
+import jieba  # 处理中文
+import matplotlib.pyplot as plt
+import nltk  # 处理英文
+from sklearn.naive_bayes import MultinomialNB
+
+
 def make_word_set(words_file):
+    """
+    统计文章中出现的词语
+    :param words_file:
+    :return:
+    """
     words_set = set()
     with open(words_file, 'r') as fp:
         for line in fp.readlines():
             word = line.strip()
-            if len(word)>0 and word not in words_set:
+            if len(word) > 0 and word not in words_set:
                 words_set.add(word)
     return words_set
 
 
-# 文本处理，也就是样本生成过程
 def text_processing(folder_path, test_size=0.2):
+    """
+    文本处理，也就是样本生成过程
+    :param folder_path:
+    :param test_size:
+    :return:
+    """
     folder_list = os.listdir(folder_path)
     data_list = []
     class_list = []
@@ -86,9 +94,15 @@ def text_processing(folder_path, test_size=0.2):
 
 
 def words_dict(all_words_list, deleteN, stopwords_set=set()):
-    # 选取特征词
-    # deleteN 用于选取词语指定选词的选定范围
-    # print(all_words_list)
+    """
+    选取特征词
+    deleteN 用于选取词语指定选词的选定范围
+    print(all_words_list)
+    :param all_words_list:
+    :param deleteN:
+    :param stopwords_set:
+    :return:
+    """
     feature_words = []
     n = 1
     for t in range(deleteN, len(all_words_list), 1):
@@ -101,14 +115,23 @@ def words_dict(all_words_list, deleteN, stopwords_set=set()):
             n += 1
     return feature_words
 
-# 文本特征
+
+
 def text_features(train_data_list, test_data_list, feature_words, flag='nltk'):
+    """
+    文本特征
+    :param train_data_list:
+    :param test_data_list:
+    :param feature_words:
+    :param flag:
+    :return:
+    """
     def text_features(text, feature_words):
         text_words = set(text)
         ## -----------------------------------------------------------------------------------
         if flag == 'nltk':
             ## nltk特征 dict
-            features = {word:1 if word in text_words else 0 for word in feature_words}
+            features = {word: 1 if word in text_words else 0 for word in feature_words}
         elif flag == 'sklearn':
             ## sklearn特征 list
             features = [1 if word in text_words else 0 for word in feature_words]
@@ -116,9 +139,11 @@ def text_features(train_data_list, test_data_list, feature_words, flag='nltk'):
             features = []
         ## -----------------------------------------------------------------------------------
         return features
+
     train_feature_list = [text_features(text, feature_words) for text in train_data_list]
     test_feature_list = [text_features(text, feature_words) for text in test_data_list]
     return train_feature_list, test_feature_list
+
 
 # 分类，同时输出准确率等
 def text_classifier(train_feature_list, test_feature_list, train_class_list, test_class_list, flag='nltk'):
@@ -137,11 +162,13 @@ def text_classifier(train_feature_list, test_feature_list, train_class_list, tes
         test_accuracy = []
     return test_accuracy
 
-print ("start")
+
+print("start")
 
 ## 文本预处理
 folder_path = '../data/SogouC/Sample'
-all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = text_processing(folder_path, test_size=0.2)
+all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = text_processing(folder_path,
+                                                                                                     test_size=0.2)
 
 # 生成stopwords_set
 stopwords_file = '../data/stopwords_cn.txt'
@@ -161,15 +188,15 @@ for deleteN in deleteNs:
     train_feature_list, test_feature_list = text_features(train_data_list, test_data_list, feature_words, flag)
     test_accuracy = text_classifier(train_feature_list, test_feature_list, train_class_list, test_class_list, flag)
     test_accuracy_list.append(test_accuracy)
-print (test_accuracy_list)
+print(test_accuracy_list)
 
 # 结果评价
-#plt.figure()
+# plt.figure()
 plt.plot(deleteNs, test_accuracy_list)
 plt.title('Relationship of deleteNs and test_accuracy')
 plt.xlabel('deleteNs')
 plt.ylabel('test_accuracy')
 plt.show()
-#plt.savefig('result.png')
+# plt.savefig('result.png')
 
-print ("finished")
+print("finished")
