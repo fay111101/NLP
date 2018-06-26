@@ -7,11 +7,12 @@
 @File    : sougo_news_analyze.py
 @Software: PyCharm
 """
-import pandas as pd
 import jieba
+import pandas as pd
 
 """Data Source
 http://www.sogou.com/labs/resource/ca.php"""
+
 
 df_news = pd.read_table('./data/val.txt', names=['category', 'theme', 'URL', 'content'], encoding='utf-8')
 df_news = df_news.dropna()
@@ -34,6 +35,8 @@ stopwords.head(20)
 
 global contents_clean
 global all_words
+
+
 def drop_stopwords(contents, stopwords):
     """
     对内容去停用词
@@ -97,7 +100,7 @@ keywords = textrank(content_S_str, topK=5, withWeight=False)
 for keyword in keywords:
     print(keyword)
 
-from gensim import corpora, models, similarities
+from gensim import corpora
 import gensim
 
 contents_clean, all_words = drop_stopwords(content, stopwords)
@@ -136,45 +139,45 @@ print(cv.get_feature_names())
 print(cv_fit.toarray())
 print(cv_fit.toarray().sum(axis=0))
 
-
-cv2=CountVectorizer(ngram_range=(1,4))
-cv2_fit=cv.fit_transform(texts)
+cv2 = CountVectorizer(ngram_range=(1, 4))
+cv2_fit = cv.fit_transform(texts)
 print(cv2.get_feature_names())
 print(cv2_fit.toarray())
 print(cv2_fit.toarray().sum(axis=0))
-
 
 
 def classifier_countvectorizer():
     from sklearn.feature_extraction.text import CountVectorizer
     vec = CountVectorizer(analyzer='word', max_features=4000, lowercase=False)
     vec.fit(words_train)
+    print(words_train)
     from sklearn.naive_bayes import MultinomialNB
     classifier = MultinomialNB()
     classifier.fit(vec.transform(words_train), y_train)
-    test_words=[]
+    test_words = []
     for line_index in range(len(x_test)):
         try:
-            #x_train[line_index][word_index] = str(x_train[line_index][word_index])
+            # x_train[line_index][word_index] = str(x_train[line_index][word_index])
             test_words.append(' '.join(x_test[line_index]))
         except:
-             print (line_index)
+            print(line_index)
     print(test_words[0])
     classifier.score(vec.transform(test_words), y_test)
+
 
 def classifier_tfidfvectorizer():
     from sklearn.feature_extraction.text import TfidfVectorizer
     vectorizer = TfidfVectorizer(analyzer='word', max_features=4000, lowercase=False)
     vectorizer.fit(words_train)
     from sklearn.naive_bayes import MultinomialNB
-    classifier_tfidf=MultinomialNB()
-    classifier_tfidf.fit(vectorizer.transform(words_train),y_train)
-    test_words=[]
+    classifier_tfidf = MultinomialNB()
+    classifier_tfidf.fit(vectorizer.transform(words_train), y_train)
+    test_words = []
     for line_word in range(len(x_test)):
         try:
-            #x_train[line_index][word_index] = str(x_train[line_index][word_index])
+            # x_train[line_index][word_index] = str(x_train[line_index][word_index])
             test_words.append(' '.join(x_test[line_index]))
         except:
-             print (line_index)
+            print(line_index)
     print(test_words[0])
-    classifier_tfidf.score(vectorizer.transform(test_words),y_test)
+    classifier_tfidf.score(vectorizer.transform(test_words), y_test)
