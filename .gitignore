@@ -1,5 +1,12 @@
 .idea/*
 venv/*
-./data/*
-./corpus/*
+data
+corpus
+.*/__pycache__/*
+tmp/*
+save/*
+.ipynb_checkpoints/*
+*/data/*
+*.pyc
+*/model/*
 
