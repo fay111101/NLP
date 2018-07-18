@@ -159,7 +159,7 @@ valid_window = 100  # Only pick dev samples in the head of the distribution.
 valid_examples = np.random.choice(valid_window, valid_size, replace=False)
 num_sampled = 64  # Number of negative examples to sample.
 
-with tf.get_default_graph as graph:
+with tf.get_default_graph() as graph:
     # Input data.
     train_inputs = tf.placeholder(tf.int32, shape=[batch_size])
     train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
