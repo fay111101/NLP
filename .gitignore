@@ -9,4 +9,5 @@ save/*
 */data/*
 *.pyc
 */model/*
+*.zip
 
