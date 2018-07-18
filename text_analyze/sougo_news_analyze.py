@@ -17,13 +17,14 @@ http://www.sogou.com/labs/resource/ca.php"""
 df_news = pd.read_table('./data/val.txt', names=['category', 'theme', 'URL', 'content'], encoding='utf-8')
 df_news = df_news.dropna()
 df_news.head()
-print(df_news.shape)
+# print(df_news.shape)
 content = df_news.content.values.tolist()
-print(content[1000])
+# print(content[1000])
 
 content_S = []
 for line in content:
-    current_segment = jieba.cut(line)
+    current_segment_list = jieba.cut(line)
+    current_segment=' '.join(current_segment_list)
     if len(current_segment) > 1 and current_segment != '\r\n':
         content_S.append(current_segment)
 
@@ -36,7 +37,8 @@ stopwords.head(20)
 global contents_clean
 global all_words
 
-
+contents_clean = []
+all_words = []
 def drop_stopwords(contents, stopwords):
     """
     对内容去停用词
@@ -44,8 +46,8 @@ def drop_stopwords(contents, stopwords):
     :param stopwords:
     :return:
     """
-    contents_clean = []
-    all_words = []
+    global contents_clean
+    global all_words
     for line in contents:
         line_clean = []
         for word in line:
@@ -61,22 +63,22 @@ df_content = pd.DataFrame({'contents_clean': contents_clean})
 df_content.head()
 df_all_words = pd.DataFrame({'all_words': all_words})
 df_all_words.head()
-
-import numpy as np
-
-words_count = df_all_words.groupby(by=['all_words']).agg({'count': np.size})
-words_count = words_count.reset_index().sort_values(by=['count'], ascending=False)
-words_count.head()
-
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-import matplotlib
-
-matplotlib.rcParams['figure.figsize'] = {10.0, 5.0}
-wordcloud = WordCloud(font_path='./data/simhei.ttf', background_color='white', max_font_size=80)
-word_frequence = {x[0]: x[1] for x in words_count.head(100).values}
-wordcloud = wordcloud.fit_words(word_frequence)
-plt.imshow(wordcloud)
+#
+# import numpy as np
+#
+# words_count = df_all_words.groupby(by=['all_words']).agg({'count': np.size})
+# words_count = words_count.reset_index().sort_values(by=['count'], ascending=False)
+# words_count.head()
+#
+# from wordcloud import WordCloud
+# import matplotlib.pyplot as plt
+# import matplotlib
+#
+# matplotlib.rcParams['figure.figsize'] = {10.0, 5.0}
+# wordcloud = WordCloud(font_path='./data/simhei.ttf', background_color='white', max_font_size=80)
+# word_frequence = {x[0]: x[1] for x in words_count.head(100).values}
+# wordcloud = wordcloud.fit_words(word_frequence)
+# plt.imshow(wordcloud)
 
 """
 关键字抽取tfidf
@@ -85,12 +87,12 @@ plt.imshow(wordcloud)
 from jieba import analyse
 
 index = 1000
-print(df_news['content'][index])
+# print(df_news['content'][index])
 tfidf = analyse.extract_tags
 content_S_str = "".join(content_S[index])
 keywords = tfidf(content_S_str, topK=5, withWeight=False)
-for keyword in keywords:
-    print(keyword)
+# for keyword in keywords:
+#     print(keyword)
 """
 关键字抽取textrank
 
@@ -98,18 +100,29 @@ for keyword in keywords:
 textrank = analyse.textrank
 keywords = textrank(content_S_str, topK=5, withWeight=False)
 for keyword in keywords:
-    print(keyword)
+    # print(keyword)
+    pass
 
 from gensim import corpora
 import gensim
 
 contents_clean, all_words = drop_stopwords(content, stopwords)
 dictinary = corpora.Dictionary(contents_clean)
+print(dictinary.items())
+# 二元组对（0,1）代表一篇文档中 id为0的单词出现了1次
 corpus = [dictinary.doc2bow(sentence) for sentence in contents_clean]
+for i,sentence in enumerate(contents_clean):
+    # print(sentence)
+    # print(dictinary.doc2bow(sentence))
+    if i==1:
+        break
+
+# print(corpus)
 lda = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictinary, num_topics=20)
-print(lda.print_topic(1, topn=5))
+# print(lda.print_topic(1, topn=5))
 for topic in lda.print_topics(num_topics=20, num_words=5):
-    print(topic[1])
+    # print(topic[1])
+    pass
 
 df_train = pd.DataFrame({'contents_clean': contents_clean, 'label': df_news['category']})
 df_train.tail()
@@ -129,21 +142,17 @@ for line_index in range(len(x_train)):
     except:
         print(line_index)
 
-print(len(words_train))
+# print(len(words_train))
 from sklearn.feature_extraction.text import CountVectorizer
 
 texts = ["dog cat fish", "dog cat cat", "fish bird", 'bird']
 cv = CountVectorizer()
 cv_fit = cv.fit_transform(texts)
-print(cv.get_feature_names())
-print(cv_fit.toarray())
-print(cv_fit.toarray().sum(axis=0))
+# print(cv.get_feature_names())
+# print(cv_fit.toarray())
+# print(cv_fit.toarray().sum(axis=0))
 
-cv2 = CountVectorizer(ngram_range=(1, 4))
-cv2_fit = cv.fit_transform(texts)
-print(cv2.get_feature_names())
-print(cv2_fit.toarray())
-print(cv2_fit.toarray().sum(axis=0))
+
 
 
 def classifier_countvectorizer():

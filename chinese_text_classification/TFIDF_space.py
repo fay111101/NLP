@@ -14,6 +14,14 @@ from Tools import readfile, readbunchobj, writebunchobj
 
 
 def vector_space(stopword_path, bunch_path, space_path, train_tfidf_path=None):
+    '''
+    构造词向量
+    :param stopword_path:
+    :param bunch_path:
+    :param space_path:
+    :param train_tfidf_path:
+    :return:
+    '''
     stpwrdlst = readfile(stopword_path).splitlines()
     bunch = readbunchobj(bunch_path)
     tfidfspace = Bunch(target_name=bunch.target_name, label=bunch.label, filenames=bunch.filenames, tdm=[],
@@ -29,6 +37,8 @@ def vector_space(stopword_path, bunch_path, space_path, train_tfidf_path=None):
     else:
         vectorizer = TfidfVectorizer(stop_words=stpwrdlst, sublinear_tf=True, max_df=0.5)
         tfidfspace.tdm = vectorizer.fit_transform(bunch.contents)
+        print(tfidfspace.tdm)
+        print(vectorizer.vocabulary_)
         tfidfspace.vocabulary = vectorizer.vocabulary_
 
     writebunchobj(space_path, tfidfspace)
