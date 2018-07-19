@@ -1,7 +1,6 @@
 .idea/*
 venv/*
-data
-corpus
+*/corpus
 .*/__pycache__/*
 tmp/*
 save/*
