@@ -25,7 +25,7 @@ import jieba.analyse as analyse
 
 d = path.dirname(__file__)
 
-text_path = '../data/test.txt' #设置要分析的文本路径
+text_path = '../corpus/test.txt' #设置要分析的文本路径
 text = open(path.join(d, text_path)).read()
 for key in analyse.extract_tags(text,10, withWeight=True):
 # 当withWeight=True时,将会返回number类型的一个权重值(TF-IDF)

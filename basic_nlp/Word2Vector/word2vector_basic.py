@@ -8,7 +8,7 @@
 @Software: PyCharm
 """
 '''
-data http://mattmahoney.net/dc/
+corpus http://mattmahoney.net/dc/
 code https://github.com/tensorflow/tensorflow/blob/r1.1/tensorflow/examples/tutorials/word2vec/word2vec_basic.py
 利用tensorflow创建word2vector
 '''
@@ -71,7 +71,7 @@ def build_dataset(words, vocabulary_size):
     建立词汇表
     :param words:
     :param vocabulary_size:
-    :return:data 为单词的id
+    :return:corpus 为单词的id
     '''
     count = [['UNK', -1]]
     # 将最稀有的词用UNK替换
@@ -98,7 +98,7 @@ def build_dataset(words, vocabulary_size):
 data, count, dictionary, reverse_dictionary = build_dataset(words, vocabulary_size)
 del words
 print('Most common words (+UNK)', count[:5])
-print('Sample data', data[:10], [reverse_dictionary[i] for i in data[:10]])
+print('Sample corpus', data[:10], [reverse_dictionary[i] for i in data[:10]])
 
 data_index = 0
 
@@ -160,12 +160,12 @@ valid_examples = np.random.choice(valid_window, valid_size, replace=False)
 num_sampled = 64  # Number of negative examples to sample.
 
 with tf.get_default_graph() as graph:
-    # Input data.
+    # Input corpus.
     train_inputs = tf.placeholder(tf.int32, shape=[batch_size])
     train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
     valid_dataset = tf.constant(valid_examples, dtype=tf.int32)
 
-    with tf.device('/gpu:0'):
+    with tf.device('/cpu:0'):
         # Look up embeddings for inputs.
         embeddings = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0))
         embed = tf.nn.embedding_lookup(embeddings, train_inputs)

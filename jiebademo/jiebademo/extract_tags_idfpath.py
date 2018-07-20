@@ -35,7 +35,7 @@ else:
 
 content = open(file_name, 'rb').read()
 
-jieba.analyse.set_idf_path("../data/idf.txt.big");
+jieba.analyse.set_idf_path("../corpus/idf.txt.big");
 
 tags = jieba.analyse.extract_tags(content, topK=topK)
 

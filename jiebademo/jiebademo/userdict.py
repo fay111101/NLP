@@ -17,7 +17,7 @@
 import sys
 sys.path.append("../")
 import jieba
-jieba.load_userdict("../data/userdict.txt")
+jieba.load_userdict("../corpus/userdict.txt")
 import jieba.posseg as pseg
 
 jieba.add_word('石墨烯')

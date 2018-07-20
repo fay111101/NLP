@@ -14,7 +14,7 @@ import pandas as pd
 http://www.sogou.com/labs/resource/ca.php"""
 
 
-df_news = pd.read_table('./data/val.txt', names=['category', 'theme', 'URL', 'content'], encoding='utf-8')
+df_news = pd.read_table('./corpus/val.txt', names=['category', 'theme', 'URL', 'content'], encoding='utf-8')
 df_news = df_news.dropna()
 df_news.head()
 # print(df_news.shape)
@@ -30,7 +30,7 @@ for line in content:
 
 print(content_S[1000])
 df_content = pd.DataFrame({'content_S': content_S})
-stopwords = pd.read_csv("./data/stopwords.txt", index_col=False, sep='\t', quoting=3, names=['stopword'],
+stopwords = pd.read_csv("./corpus/stopwords.txt", index_col=False, sep='\t', quoting=3, names=['stopword'],
                         encoding='utf-8')
 stopwords.head(20)
 
@@ -75,7 +75,7 @@ df_all_words.head()
 # import matplotlib
 #
 # matplotlib.rcParams['figure.figsize'] = {10.0, 5.0}
-# wordcloud = WordCloud(font_path='./data/simhei.ttf', background_color='white', max_font_size=80)
+# wordcloud = WordCloud(font_path='./corpus/simhei.ttf', background_color='white', max_font_size=80)
 # word_frequence = {x[0]: x[1] for x in words_count.head(100).values}
 # wordcloud = wordcloud.fit_words(word_frequence)
 # plt.imshow(wordcloud)

@@ -1,9 +1,13 @@
-'''https://github.com/lpty/nlp_base'''
+
 PROB_START = 'start.py'
 INPUT_DATA = '../corpus/2014' + '/0101/c1002-23995935.txt'
 PROB_EMIT = 'pro_emit.py'
 PROB_TRANS = 'pro_trans.py'
-
+'''
+参考博客：
+https://blog.csdn.net/sinat_33741547/article/details/78870575
+https://github.com/lpty/nlp_base
+'''
 
 class HMMHelper():
     def __init__(self):

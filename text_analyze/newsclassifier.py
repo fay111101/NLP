@@ -166,12 +166,12 @@ def text_classifier(train_feature_list, test_feature_list, train_class_list, tes
 print("start")
 
 ## 文本预处理
-folder_path = '../data/SogouC/Sample'
+folder_path = '../corpus/SogouC/Sample'
 all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = text_processing(folder_path,
                                                                                                      test_size=0.2)
 
 # 生成stopwords_set
-stopwords_file = '../data/stopwords_cn.txt'
+stopwords_file = '../corpus/stopwords_cn.txt'
 stopwords_set = make_word_set(stopwords_file)
 
 ## 文本特征提取和分类
