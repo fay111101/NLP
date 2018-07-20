@@ -76,20 +76,20 @@ class TaggedLineSentence(object):
             unsup_reviews = open(eval(repr(unsup).format(name)), 'w')
             for file in unsup_corpus_files:
                 with open(unsup_file + file, 'r') as f:
-                    unsup_reviews.write(''.join(f.readlines()))
+                    unsup_reviews.write(''.join(f.readlines())+'\n')
             return
         pos_file=eval(repr(pos_corpus_dir).format(name))
         pos_corpus_files = os.listdir(pos_file)
         pos_reviews = open(eval(repr(pos).format(name)), 'w')
         for file in pos_corpus_files:
             with open(pos_file + file, 'r') as f:
-                pos_reviews.write(''.join(f.readlines()))
+                pos_reviews.write(''.join(f.readlines())+'\n')
         neg_file=eval(repr(neg_corpus_dir).format(name))
         neg_corpus_files = os.listdir(neg_file)
         neg_reviews = open(eval(repr(neg).format(name)), 'w')
         for file in neg_corpus_files:
             with open(neg_file + file, 'r') as f:
-                neg_reviews.write(''.join(f.readlines()))
+                neg_reviews.write(''.join(f.readlines())+'\n')
 
 
 
