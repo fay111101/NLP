@@ -159,8 +159,9 @@ valid_window = 100  # Only pick dev samples in the head of the distribution.
 valid_examples = np.random.choice(valid_window, valid_size, replace=False)
 num_sampled = 64  # Number of negative examples to sample.
 
-with tf.get_default_graph() as graph:
-    # Input corpus.
+graph=tf.Graph()
+with graph.as_default():
+    # Input data.
     train_inputs = tf.placeholder(tf.int32, shape=[batch_size])
     train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
     valid_dataset = tf.constant(valid_examples, dtype=tf.int32)
@@ -201,7 +202,7 @@ with tf.get_default_graph() as graph:
         init = tf.global_variables_initializer()
     # Step 5: Begin training.
     num_steps = 100001
-with tf.Session(graph=graph) as sess:
+with tf.Session(graph=graph,config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
     init.run()
     print("Initialized")
 
@@ -212,6 +213,7 @@ with tf.Session(graph=graph) as sess:
         # We perform one update step by evaluating the optimizer op (including it
         # in the list of returned values for session.run()
         _, loss_val = sess.run([optimizer, loss], feed_dict=feed_dict)
+        global average_loss
         average_loss += loss_val
 
         if step % 2000 == 0:
