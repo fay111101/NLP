@@ -57,9 +57,9 @@ class TaggedLineSentence(object):
 
     def __init__(self, sources):
         self.sources = sources
-        self.create_dataset(pos,neg,unsup,'train')
-        self.create_dataset(pos,neg,unsup,'test')
-        self.create_dataset(pos,neg,unsup,'unsup')
+        # self.create_dataset(pos,neg,unsup,'train')
+        # self.create_dataset(pos,neg,unsup,'test')
+        # self.create_dataset(pos,neg,unsup,'unsup')
 
     def create_dataset(self, pos, neg, unsup,name):
         '''
@@ -151,11 +151,11 @@ for epoch in range(20):
                 )
 
 logger.info('model saved')
-model.save('./imdb.d2v')
+model.save('./model/imdb.d2v')
 
 # load and test the model
 logger.info('model loaded')
-model = Doc2Vec.load('./imdb.d2v')
+model = Doc2Vec.load('./model/imdb.d2v')
 
 logger.info('Sentiment Analysis...')
 
