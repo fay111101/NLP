@@ -5,12 +5,11 @@
 @Author  : fay
 @Email   : fay625@sina.cn
 @File    : imdb.py
-@Software: PyCharm
+@Software: PyCharm gensim 3.5.0
 """
 '''
 https://github.com/keras-team/keras/blob/master/examples/imdb.py
 https://blog.csdn.net/walker_hao/article/details/78995591
-https://blog.csdn.net/lenbow/article/details/52120230
 data:http://www.cs.cornell.edu/people/pabo/movie-review-data/
 '''
 import logging
@@ -43,7 +42,7 @@ neg_corpus_dir = './corpus/aclImdb/{}/neg/'
 unsup_corpus_dir = './corpus/aclImdb/{}/'
 pos='./corpus/aclImdb/alldata/{}-pos.txt'
 neg='./corpus/aclImdb/alldata/{}-neg.txt'
-unsup='./corpus/aclImdb/alldata/unsup.txt'
+unsup='./corpus/aclImdb/alldata/train-unsup.txt'
 corpus_path='./corpus/aclImdb/alldata/'
 
 ## the code for the doc2vec
@@ -132,7 +131,7 @@ class TaggedLineSentence(object):
 
 sources = {'test-neg.txt': 'TEST_NEG', 'test-pos.txt': 'TEST_POS',
            'train-neg.txt': 'TRAIN_NEG', 'train-pos.txt': 'TRAIN_POS',
-           'unsup.txt': 'TRAIN_UNS'}
+           'train-unsup.txt': 'TRAIN_UNS'}
 sentences = TaggedLineSentence(sources)
 
 # set the parameter and get a model.
