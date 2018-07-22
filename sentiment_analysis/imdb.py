@@ -100,6 +100,7 @@ class TaggedLineSentence(object):
             with utils.smart_open(corpus_path+source) as fin:
                 for item_no, line in enumerate(fin):
                     # TaggedDocument([word1, word2 ...], [tagx])
+                    # 要给每一个文章一个唯一的标记tag
                     self.sentences.append(TaggedDocument(utils.to_unicode(line).split(),
                                                          [prefix + '_%s' % item_no]))
         # print(self.sentences)
@@ -111,13 +112,13 @@ class TaggedLineSentence(object):
           'how', 'it', 'may', 'contribute', 'to', 'solving', 'the', 'global', 'warming', 'problem', '.', 'when', 'energy', '"is',
                    '.', 'if', 'you', 'want', 'to', 'have', 'a', 'good', 'time', 'and', 'have', 'to', 'choose', 'between', 'this',
           'movie', 'and', 'sticking',            'safety', 'pins', 'in', 'your', 'eyelids', ',', 'take', 'my', 'advise', ':', 
-          'choose', 'the', 'latter', '.'], tags=['TRAIN_19520']), 
+          'choose', 'the', 'latter', '.'], tags=['TRAIN_POS_19520']), 
 
           TaggedDocument(words=['philo', 'vance', '(', 'william', 'powell', ')', 'helps', 'solve', 'multiple', 'murders', 'among', 
           'the', 'wealthy', 'after',            'a', 'dog', 'show', '.', 'usually', 'i', 'hate', 'overly', 'convoluted', 'mysteries', 
           '(', 'like', 'this', ')',       'but', 'i', 'love', 'this', 'movie', '.', 'good', 'actor', 'with', 'a', 'very', 'distinctive',
            'voice', 'and', 'some', 'of', 'his', 'lines', 'were', 'hilarious', '.', 'basically', ',', 'an', 'excellent', '1930s', 'hollywood',
-            'murder', 'mystery', '.', 'well', 'worth', 'seeing', '.'], tags=['TRAIN_19521'])]
+            'murder', 'mystery', '.', 'well', 'worth', 'seeing', '.'], tags=['TRAIN_POS_19521'])]
 
         '''
 
