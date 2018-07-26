@@ -110,8 +110,8 @@ def labelize_reviews(reviews, label_type):
 
 def train(x_train, x_test, unsup_reviews, size=300, epoch_num=10):
     # instantiate our DM and DBOW models
-    model_dm = gensim.models.Doc2Vec(min_count=1, window=5, size=size, sample=1e-3, negative=5, workers=5)
-    model_dbow = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, dm=0, workers=3)
+    model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=5)
+    model_dbow = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, dm=0, workers=5)
 
     # build vocab over all reviews
     # AttributeError: 'list' object has no attribute 'words'
@@ -191,7 +191,13 @@ def classifier(train_vecs, y_train, test_vecs, y_test):
     print(lr.predict_proba(test_vecs).shape)
     pred_probas = lr.predict_proba(test_vecs)[:,1]
     print('Test Accuracy: %.2f' % lr.score(test_vecs, y_test))
-    return pred_probas
+
+    from sklearn.ensemble import RandomForestClassifier
+    rf=RandomForestClassifier(max_depth=8,n_estimators=100)
+    rf.fit(train_vecs,y_train)
+    pred_probas1=rf.predict_proba(test_vecs)[:,1]
+    print('Test Acurracy:%.2f'% rf.score(test_vecs,y_test))
+    return pred_probas1
 
 
 def ROC_curve(pred_probas, y_test):
@@ -209,7 +215,7 @@ def ROC_curve(pred_probas, y_test):
 
 if __name__ == '__main__':
     # 设置向量维度和训练次数
-    size, epoch_num = 400, 10
+    size, epoch_num = 100, 20
     # 获取训练与测试数据及其类别标注
     x_train, x_test, y_train, y_test, unsup_reviews = get_dataset()
     # 对数据进行训练，获得模型
@@ -218,6 +224,7 @@ if __name__ == '__main__':
     logger.info('model loaded')
     model_dm = Doc2Vec.load('./model/imdbdm.d2v')
     model_dbow = Doc2Vec.load('./model/imdbdbow.d2v')
+
     # 从模型中抽取文档相应的向量
     train_vecs, test_vecs = get_vectors(model_dm, model_dbow, size)
     # 使用文章所转换的向量进行情感正负分类训练
@@ -231,7 +238,7 @@ if __name__ == '__main__':
 #     [
 #     ['picking', 'up', 'the', 'jacket', 'of', 'this', 'dvd', 'in', 'the', 'video', 'store', 'i', 'was', 'intrigued',
 #
-#       'bob', "thornton's", 'wig', 'all', 'about', '?', '?', '?', 'i', 'could', 'go', 'on', 'for', 'another', 'ten',
+#       'bob', "thornton's", 'wig', 'all', 'about', '?', '?', '?', 'i', 'could', 'go', 'on', 1for', 'another', 'ten',
 #       'lines', ',', 'but', 'this', 'film', 'just', "isn't", 'worth', 'the', 'bother', '.', 'anyone', 'who', 'hates',
 #       'wasting', 'money', 'should', 'stay', 'well', 'away', 'from', 'this', 'stinker', '.'], ['UNSUP_49500']
 #       ],
