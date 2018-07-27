@@ -4,11 +4,11 @@
 @Time    : 18-7-19
 @Author  : fay
 @Email   : fay625@sina.cn
-@File    : imdb.py
+@File    : imdb_doc.py
 @Software: PyCharm gensim 3.5.0
 """
 '''
-https://github.com/keras-team/keras/blob/master/examples/imdb.py
+https://github.com/keras-team/keras/blob/master/examples/imdb_doc.py
 https://blog.csdn.net/walker_hao/article/details/78995591
 data:http://www.cs.cornell.edu/people/pabo/movie-review-data/
 '''

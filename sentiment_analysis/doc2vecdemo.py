@@ -24,6 +24,7 @@ from gensim.test.utils import get_tmpfile
 fname=get_tmpfile('my_doc2vec_model')
 model.save(fname)
 model=Doc2Vec.load(fname)
+#
 model.delete_temporary_training_data(keep_doctags_vectors=True,keep_inference=True)
 vector=model.infer_vector(['system','response'])
 print('===================')
