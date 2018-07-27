@@ -146,6 +146,7 @@ def train_vector():
     # train the model
     for epoch in range(20):
         logger.info('epoch %d' % epoch)
+        # total_examples
         model.train(sentences.perm(),
                     total_examples=model.corpus_count,
                     epochs=model.iter
@@ -199,7 +200,13 @@ def classify():
     print("accuracy: " + str(rf.score(test_arrays, test_labels)))
     # accuracy:0.79984
 
+def get_similar():
+    model_dm=Doc2Vec.load('./model/imdb.d2v')
+    test_text=['I','think','this','movie','is','good','!']
+    inferred_vector_dm=model_dm.infer_vector(test_text)
+    print(inferred_vector_dm)
+    sims=model_dm.docvecs.most_similar([inferred_vector_dm],topn=10)
 
 if __name__ == '__main__':
-    train_vector()
+    # train_vector()
     classify()

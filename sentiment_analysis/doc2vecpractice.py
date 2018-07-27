@@ -108,10 +108,10 @@ def labelize_reviews(reviews, label_type):
     return labelized
 
 
-def train(x_train, x_test, unsup_reviews, size=300, epoch_num=10):
+def train(x_train, x_test, unsup_reviews, size=100, epoch_num=20):
     # instantiate our DM and DBOW models
-    model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=5)
-    model_dbow = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, dm=0, workers=5)
+    model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-4, negative=5, workers=7)
+    # model_dbow = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-4, negative=5, dm=0, workers=7)
 
     # build vocab over all reviews
     # AttributeError: 'list' object has no attribute 'words'
@@ -120,7 +120,7 @@ def train(x_train, x_test, unsup_reviews, size=300, epoch_num=10):
     # model_dbow.build_vocab(np.concatenate((x_train, x_test, unsup_reviews)).tolist())
     all_reviews = x_train + x_test + unsup_reviews
     model_dm.build_vocab(all_reviews)
-    model_dbow.build_vocab(all_reviews)
+    # model_dbow.build_vocab(all_reviews)
     # We pass through the data set multiple times, shuffling the training reviews each time to improve accuracy.
     # 进行多次重复训练，每一次都需要对训练数据重新打乱，以提高精度
     # AttributeError: 'numpy.ndarray' object has no attribute 'words'
@@ -135,8 +135,8 @@ def train(x_train, x_test, unsup_reviews, size=300, epoch_num=10):
         random.shuffle(all_train_reviews)
         model_dm.train(all_train_reviews, total_examples=model_dm.corpus_count,
                        epochs=model_dm.iter)
-        model_dbow.train(all_train_reviews, total_examples=model_dbow.corpus_count,
-                         epochs=model_dbow.iter)
+        # model_dbow.train(all_train_reviews, total_examples=model_dbow.corpus_count,
+        #                  epochs=model_dbow.iter)
     # train over test set
     # AttributeError: 'numpy.ndarray' object has no attribute 'words'
     # x_test = np.array(x_test)
@@ -145,13 +145,14 @@ def train(x_train, x_test, unsup_reviews, size=300, epoch_num=10):
         # perm = np.random.permutation(x_test.shape[0])
         random.shuffle(x_test)
         model_dm.train(x_test, total_examples=model_dm.corpus_count, epochs=model_dm.iter)
-        model_dbow.train(x_test, total_examples=model_dbow.corpus_count, epochs=model_dbow.iter)
+        # model_dbow.train(x_test, total_examples=model_dbow.corpus_count, epochs=model_dbow.iter)
 
     logger.info('model saved')
     model_dm.save('./model/imdbdm.d2v')
-    model_dbow.save('./model/imdbdbow.d2v')
+    # model_dbow.save('./model/imdbdbow.d2v')
 
-    return model_dm, model_dbow
+    # return model_dm, model_dbow
+    return model_dm
 
 
 # Get training set vectors from our models
@@ -172,14 +173,15 @@ def get_vectors(model_dm, model_dbow, size):
     '''
     # 获取训练数据集的文档向量
     train_vecs_dm = getVecs(model_dm, x_train, size)
-    train_vecs_dbow = getVecs(model_dbow, x_train, size)
-    train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
+    # train_vecs_dbow = getVecs(model_dbow, x_train, size)
+    # train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
     # 获取测试数据集的文档向量
     # Construct vectors for test reviews
     test_vecs_dm = getVecs(model_dm, x_test, size)
-    test_vecs_dbow = getVecs(model_dbow, x_test, size)
-    test_vecs = np.hstack((test_vecs_dm, test_vecs_dbow))
-    return train_vecs, test_vecs
+    # test_vecs_dbow = getVecs(model_dbow, x_test, size)
+    # test_vecs = np.hstack((test_vecs_dm, test_vecs_dbow))
+    # return train_vecs, test_vecs
+    return train_vecs_dm,test_vecs_dm
 
 
 def classifier(train_vecs, y_train, test_vecs, y_test):
