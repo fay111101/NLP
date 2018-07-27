@@ -130,18 +130,22 @@ class TaggedLineSentence(object):
         return shuffled
 
 
-def train_vector():
+def get_dataset():
     sources = {'test-neg.txt': 'TEST_NEG', 'test-pos.txt': 'TEST_POS',
                'train-neg.txt': 'TRAIN_NEG', 'train-pos.txt': 'TRAIN_POS',
                'train-unsup.txt': 'TRAIN_UNS'}
     sentences = TaggedLineSentence(sources)
+    return sentences.to_array()
 
+
+def train_vector():
+    sentences = get_dataset()
     # set the parameter and get a model.
     # by default dm=1, PV-DM is used. Otherwise, PV-DBOW is employed.
     model = Doc2Vec(min_count=1, window=10, size=100,
                     sample=1e-4, negative=5, dm=1, workers=7)
     # print(type(sentences))
-    model.build_vocab(sentences.to_array())
+    model.build_vocab(sentences)
 
     # train the model
     for epoch in range(20):
@@ -200,13 +204,29 @@ def classify():
     print("accuracy: " + str(rf.score(test_arrays, test_labels)))
     # accuracy:0.79984
 
+
 def get_similar():
-    model_dm=Doc2Vec.load('./model/imdb.d2v')
-    test_text=['I','think','this','movie','is','good','!']
-    inferred_vector_dm=model_dm.infer_vector(test_text)
-    print(inferred_vector_dm)
-    sims=model_dm.docvecs.most_similar([inferred_vector_dm],topn=10)
+    model_dm = Doc2Vec.load('./model/imdb.d2v')
+    test_text = ['I', 'think', 'this movie', 'is', 'not good', '!']
+    inferred_vector_dm = model_dm.infer_vector(test_text)
+    # print(inferred_vector_dm)
+    sims = model_dm.docvecs.most_similar([inferred_vector_dm], topn=10)
+    return sims
+
 
 if __name__ == '__main__':
     # train_vector()
-    classify()
+    # classify()
+    sims = get_similar()
+    x_train = get_dataset()
+    print(x_train[1:10])
+    print(sims)
+    print("=====================================")
+    for count, sim in enumerate(sims):
+        sentence = x_train[count]
+        words = ''
+        for word in sentence[0]:
+            words = words + " " + word
+        print(words)
+        print(sim)
+        print(len(sentence[0]))

@@ -29,26 +29,8 @@ vector=model.infer_vector(['system','response'])
 print('===================')
 print(vector)
 
-
-import sys
 import gensim
-import sklearn
-import numpy as np
-from gensim.model.doc2vec import Doc2Vec,LabeledSentence
+
 TaggedDocument=gensim.models.doc2vec.TaggedDocument
 
-def get_dataset():
-    with open('./corpus/doc2vec.txt','r') as f:
-        docs=f.readlines()
-        print(len(docs))
-        x_train=[]
-        for i,text in enumerate(docs):
-            word_list=text.split(' ')
-            l=len(word_list)
-            word_list[l-1]=word_list[l-1].strip()
-            x_train.append(document)
-    return x_train
 
-def getVecs(model,corpus,size):
-    vecs=[np.a
-            
