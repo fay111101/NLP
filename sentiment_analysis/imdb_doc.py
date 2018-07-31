@@ -124,10 +124,10 @@ class TaggedLineSentence(object):
 
         return self.sentences
 
-    def perm(self):
-        shuffled = list(self.sentences)
-        random.shuffle(shuffled)  # Note that this line does not return anything.
-        return shuffled
+def perm(sentences):
+    shuffled = list(sentences)
+    random.shuffle(shuffled)  # Note that this line does not return anything.
+    return shuffled
 
 
 def get_dataset():
@@ -151,7 +151,7 @@ def train_vector():
     for epoch in range(20):
         logger.info('epoch %d' % epoch)
         # total_examples
-        model.train(sentences.perm(),
+        model.train(perm(sentences),
                     total_examples=model.corpus_count,
                     epochs=model.iter
                     )
@@ -215,8 +215,8 @@ def get_similar():
 
 
 if __name__ == '__main__':
-    # train_vector()
-    # classify()
+    train_vector()
+    classify()
     sims = get_similar()
     x_train = get_dataset()
     print(x_train[1:10])

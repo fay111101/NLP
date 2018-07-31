@@ -8,8 +8,8 @@
 @Software: PyCharm
 """
 '''
-2015
-https://districtdatalabs.silvrback.com/modern-methods-for-sentiment-analysis
+
+
 '''
 import gensim
 import logging
@@ -56,7 +56,7 @@ def get_data():
         pos = file.readlines()
     with open(train_neg_path, 'r') as file:
         neg = file.readlines()
-    y = np.concatenate((np.zeros(len(pos)), np.zeros(len(neg))))
+    y = np.concatenate((np.ones(len(pos)), np.zeros(len(neg))))
 
     x_train, x_test, y_train, y_test = train_test_split(np.concatenate((pos, neg)), y, test_size=0.2)
     return x_train, x_test, y_train, y_test
@@ -67,8 +67,11 @@ def train_vector(n_dims):
     imdb_w2v = Word2Vec(size=n_dims, workers=7, window=10, min_count=10)
     imdb_w2v.build_vocab(x_train)
     imdb_w2v.train(sentences=x_train, total_examples=imdb_w2v.corpus_count, epochs=imdb_w2v.iter)
-    imdb_w2v.save(model_path + 'imdb_w2v.model')
-    return imdb_w2v
+    imdb_w2v.save(model_path + 'imdb_w2vtrain.model')
+    imdb_w2v1 = Word2Vec(size=n_dims, workers=7, window=10, min_count=10)
+    imdb_w2v1.build_vocab(x_test)
+    imdb_w2v1.train(x_test, total_examples=imdb_w2v1.corpus_count, epochs=imdb_w2v1.iter)
+    imdb_w2v1.save(model_path + 'imdb_w2vtest.model')
 
 
 def buildWordVector(text, size, model):
@@ -76,7 +79,7 @@ def buildWordVector(text, size, model):
     count = 0.
     for word in text:
         try:
-            vec += imdb_w2v[word].reshape((1, size))
+            vec += model[word].reshape((1, size))
             count += 1.
         except KeyError:
             continue
@@ -85,21 +88,25 @@ def buildWordVector(text, size, model):
     return vec
 
 
-def classifier(x_train,y_train, x_test,y_test ,size, imdb_w2v):
+def classifier(size):
+    x_train, x_test, y_train, y_test = get_data()
     from sklearn.preprocessing import scale
-    train_vecs = np.concatenate([buildWordVector(z, size=size, model=imdb_w2v) for z in x_train])
+    imdb_w2v_train = Word2Vec.load(model_path + 'imdb_w2vtrain.model')
+    train_vecs = np.concatenate([buildWordVector(z, size=size, model=imdb_w2v_train) for z in x_train])
     train_vecs = scale(train_vecs)
-    imdb_w2v.train(x_test)
-    test_vecs=np.concatenate([buildWordVector(z,size=size,model=imdb_w2v) for z in x_test])
+    imdb_w2v_test = Word2Vec.load(model_path + 'imdb_w2vtest.model')
+    test_vecs = np.concatenate([buildWordVector(z, size=size, model=imdb_w2v_train) for z in x_test])
+    # test_vecs = np.concatenate([buildWordVector(z, size=size, model=imdb_w2v_test) for z in x_test])
+    test_vecs = scale(test_vecs)
     from sklearn.linear_model import SGDClassifier
-    lr=SGDClassifier(loss='log',penalty='l1')
-    lr.fit(train_vecs,y_train)
-    from sklearn.metrics import roc_curve,auc
+    lr = SGDClassifier(loss='log', penalty='l1')
+    lr.fit(train_vecs, y_train)
+    from sklearn.metrics import roc_curve, auc
     import matplotlib.pyplot as plt
-    pred_probas=lr.predict_proba(test_vecs)[:,1]
-    fpr,tpr=roc_curve(y_test,pred_probas)
-    roc_auc=auc(fpr,tpr)
-    plt.plot(fpr,tpr,label='area=%.2f'%roc_auc)
+    pred = lr.predict(test_vecs)
+    fpr, tpr ,_= roc_curve(y_test, pred)
+    roc_auc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, label='area=%.2f' % roc_auc)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
@@ -109,6 +116,5 @@ def classifier(x_train,y_train, x_test,y_test ,size, imdb_w2v):
 
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = get_data()
-    imdb_w2v = train_vector(100)
-    classifier(x_train, x_test, y_train, y_test,100,imdb_w2v)
+    # imdb_w2v = train_vector(100)
+    classifier(100)
