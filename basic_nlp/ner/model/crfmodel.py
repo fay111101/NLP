@@ -13,6 +13,7 @@ from sklearn_crfsuite import metrics
 from sklearn.externals import joblib
 from .corpus import get_corpus
 from .config import get_config
+from .util import q_to_b
 __model = None
 
 
