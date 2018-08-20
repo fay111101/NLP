@@ -2,7 +2,7 @@
 
 import yaml
 import sys
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 import multiprocessing
 import numpy as np
 from gensim.models.word2vec import Word2Vec

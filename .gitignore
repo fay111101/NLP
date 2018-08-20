@@ -9,4 +9,4 @@ save/*
 *.pyc
 */model/*
 *.zip
-
+*/**/model

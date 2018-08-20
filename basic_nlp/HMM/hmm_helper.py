@@ -6,7 +6,7 @@ PROB_TRANS = 'pro_trans.py'
 '''
 参考博客：
 https://blog.csdn.net/sinat_33741547/article/details/78870575
-https://github.com/lpty/nlp_base
+https://blog.csdn.net/shenxiaoming77/article/details/51511335
 '''
 
 class HMMHelper():
