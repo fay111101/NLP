@@ -12,14 +12,15 @@ corpus http://mattmahoney.net/dc/
 code https://github.com/tensorflow/tensorflow/blob/r1.1/tensorflow/examples/tutorials/word2vec/word2vec_basic.py
 利用tensorflow创建word2vector
 '''
-import tensorflow as tf
-import os
-import numpy as np
-import zipfile
-import urllib
 import collections
-import random
 import math
+import os
+import random
+import urllib
+import zipfile
+
+import numpy as np
+import tensorflow as tf
 
 url = 'http://mattmahoney.net/dc/'
 
@@ -107,7 +108,7 @@ data_index = 0
 def generate_batch(batch_size, num_skips, skip_window):
     '''
     the quick brown fox jumped over the lazy dog
-    上下文可以是语法词法等，这里定义为左边的词和右边的词，窗口大小设置为1，则可以得到context-target训练对如下：
+    上下文可以是语法\词法等，这里定义为左边的词和右边的词，窗口大小设置为1，则可以得到context-target训练对如下：
     ([the, brown], quick), ([quick, fox], brown), ([brown, jumped], fox)
     :param batch_size:每次训练batch的大小
     :param num_skips:通过 num_skips 定义从上下文中随机抽取的单词数量
@@ -159,7 +160,7 @@ valid_window = 100  # Only pick dev samples in the head of the distribution.
 valid_examples = np.random.choice(valid_window, valid_size, replace=False)
 num_sampled = 64  # Number of negative examples to sample.
 
-graph=tf.Graph()
+graph = tf.Graph()
 with graph.as_default():
     # Input data.
     train_inputs = tf.placeholder(tf.int32, shape=[batch_size])
@@ -202,7 +203,7 @@ with graph.as_default():
         init = tf.global_variables_initializer()
     # Step 5: Begin training.
     num_steps = 100001
-with tf.Session(graph=graph,config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
+with tf.Session(graph=graph, config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
     init.run()
     print("Initialized")
 

@@ -9,11 +9,13 @@
 """
 
 import sklearn_crfsuite
-from sklearn_crfsuite import metrics
 from sklearn.externals import joblib
-from .corpus import get_corpus
-from .config import get_config
-from .util import q_to_b
+from sklearn_crfsuite import metrics
+
+from config import get_config
+from corpus import get_corpus
+from util import q_to_b
+
 __model = None
 
 
@@ -57,17 +59,18 @@ class NER:
     def predict(self, sentence):
         """
         预测
+        # TODO 加入标签到序列的转换？
         """
         self.load_model()
         u_sent = q_to_b(sentence)
-        word_lists = [[u'<BOS>']+[c for c in u_sent]+[u'<EOS>']]
+        word_lists = [[u'<BOS>'] + [c for c in u_sent] + [u'<EOS>']]
         word_grams = [self.corpus.segment_by_window(word_list) for word_list in word_lists]
         features = self.corpus.extract_feature(word_grams)
         y_predict = self.model.predict(features)
         entity = u''
         for index in range(len(y_predict[0])):
             if y_predict[0][index] != u'O':
-                if index > 0 and y_predict[0][index][-1] != y_predict[0][index-1][-1]:
+                if index > 0 and y_predict[0][index][-1] != y_predict[0][index - 1][-1]:
                     entity += u' '
                 entity += u_sent[index]
             elif entity[-1] != u' ':
@@ -97,3 +100,6 @@ def get_model():
     if not __model:
         __model = NER()
     return __model
+
+
+get_model()

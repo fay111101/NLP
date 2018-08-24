@@ -8,7 +8,7 @@
 @Software: PyCharm
 """
 from .corpus import get_corpus
-from .crfmodel import get_model
+from crfmodel import get_model
 
 __all__ = ["pre_process", "train", "recognize"]
 
@@ -34,4 +34,5 @@ def recognize(sentence):
     命名实体识别
     """
     model = get_model()
+    print(model.predict(sentence))
     return model.predict(sentence)

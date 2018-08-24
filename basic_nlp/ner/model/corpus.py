@@ -9,14 +9,17 @@
 """
 import re
 
-from .config import get_config
-from .util import q_to_b
+from config import get_config
+from util import q_to_b
 
 __corpus = None
 
 
 class Corpus:
     _config = get_config()
+    print(_config)
+    print(_config.get('ner', 'process_corpus_path'))
+    # 词性与实体识别的对应关系
     _maps = {u't': u'T',
              u'nr': u'PER',
              u'ns': u'ORG',
@@ -117,13 +120,15 @@ class Corpus:
         由词性提取标签
         """
         t = cls._maps.get(p, None)
+        print(t)
         return t if t else u'O'
 
     @classmethod
     def tag_perform(cls, tag, index):
         """
-        标签使用BIO模式
+        标签使用BIO模式，对标好了B的进行实体标注
         """
+        # 使用BIO模式标注实体
         if index == 0 and tag != u'O':
             return u'B_{}'.format(tag)
         elif tag != u'O':
@@ -157,22 +162,38 @@ class Corpus:
         """
         初始化字序列、词性序列、标记序列
         """
+        # word :<class 'list'>: ['迈向', '充满', '希望', '的', '新', '世纪', '——', '一九九八年新年', '讲话', '(', '附', '图片', '1', '张', ')']
         words_seq = [[word.split(u'/')[0] for word in words] for words in words_list]
+        # seq :<class 'list'>: ['v', 'v', 'n', 'u', 'a', 'n', 'w', 't', 'n', 'w', 'v', 'n', 'm', 'q', 'w']
         pos_seq = [[word.split(u'/')[1] for word in words] for words in words_list]
         # 对应词性标注提取标签
         #             {u't': u'T',
         #              u'nr': u'PER',
         #              u'ns': u'ORG',
         #              u'nt': u'LOC'}
+        # tag_seq
+        # <class 'list'>: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'T', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
         tag_seq = [[cls.pos_to_tag(p) for p in pos] for pos in pos_seq]
+
+        # <class 'list'>: [['v', 'v'], ['v', 'v'], ['n', 'n'], ['u'], ['a'], ['n', 'n'], ['w', 'w'], ['t', 't', 't', 't'
+        # , 't', 't', 't'], ['n', 'n'], ['w'], ['v'], ['n', 'n'], ['m'], ['q'], ['w']]
         cls.pos_seq = [[[pos_seq[index][i] for _ in range(len(words_seq[index][i]))]
                         for i in range(len(pos_seq[index]))] for index in range(len(pos_seq))]
+        # <class 'list'>: [['O', 'O'], ['O', 'O'], ['O', 'O'], ['O'], ['O'], ['O', 'O'], ['O', 'O'], ['B_T', 'I_T', 'I_T'
+        # , 'I_T', 'I_T', 'I_T', 'I_T'], ['O', 'O'], ['O'], ['O'], ['O', 'O'], ['O'], ['O'], ['O']]
         cls.tag_seq = [[[cls.tag_perform(tag_seq[index][i], w) for w in range(len(words_seq[index][i]))]
                         for i in range(len(tag_seq[index]))] for index in range(len(tag_seq))]
+        # <class 'list'>: ['un', 'v', 'v', 'v', 'v', 'n', 'n', 'u', 'a', 'n', 'n', 'w', 'w', 't', 't', 't', 't', 't', 't'
+        # , 't', 'n', 'n', 'w', 'v', 'n', 'n', 'm', 'q', 'w', 'un']
         cls.pos_seq = [[u'un'] + [cls.pos_perform(p) for pos in pos_seq for p in pos] + [u'un'] for pos_seq in
                        cls.pos_seq]
+        # <class 'list'>: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B_T', 'I_T', 'I_T', 'I_T', 'I_T',
+        #  'I_T', 'I_T', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
         cls.tag_seq = [[t for tag in tag_seq for t in tag] for tag_seq in cls.tag_seq]
+        # <class 'list'>: ['<BOS>', '迈', '向', '充', '满', '希', '望', '的', '新', '世', '纪', '—', '—', '一', '九', '九',
+        # '八', '年', '新', '年', '讲', '话', '(', '附', '图', '片', '1', '张', ')', '<EOS>']
         cls.word_seq = [[u'<BOS>'] + [w for word in word_seq for w in word] + [u'<EOS>'] for word_seq in words_seq]
+        print(cls.word_seq)
 
     @classmethod
     def segment_by_window(cls, words_list=None, window=3):
@@ -215,6 +236,7 @@ class Corpus:
         训练数据
         """
         word_grams = [cls.segment_by_window(word_list) for word_list in cls.word_seq]
+        print(word_grams)
         features = cls.extract_feature(word_grams)
         return features, cls.tag_seq
 
