@@ -54,7 +54,7 @@ def read_data(filename):
     :return:
     '''
     with zipfile.ZipFile(filename) as f:
-        # tf.compat.as_str Returns the given argument as a unicode string.
+        # tf.compat.as_str Returns the given argument as a unicode sentence.
         data = tf.compat.as_str(f.read(f.namelist()[0])).split()
     return data
 

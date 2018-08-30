@@ -20,10 +20,12 @@ class Corpus:
     print(_config)
     print(_config.get('ner', 'process_corpus_path'))
     # 词性与实体识别的对应关系
-    _maps = {u't': u'T',
-             u'nr': u'PER',
-             u'ns': u'ORG',
-             u'nt': u'LOC'}
+    _maps = {
+        u't': u'T',
+        u'nr': u'PER',
+        u'ns': u'ORG',
+        u'nt': u'LOC'
+    }
 
     @classmethod
     def pre_process(cls):
@@ -193,7 +195,6 @@ class Corpus:
         # <class 'list'>: ['<BOS>', '迈', '向', '充', '满', '希', '望', '的', '新', '世', '纪', '—', '—', '一', '九', '九',
         # '八', '年', '新', '年', '讲', '话', '(', '附', '图', '片', '1', '张', ')', '<EOS>']
         cls.word_seq = [[u'<BOS>'] + [w for word in word_seq for w in word] + [u'<EOS>'] for word_seq in words_seq]
-        print(cls.word_seq)
 
     @classmethod
     def segment_by_window(cls, words_list=None, window=3):
@@ -207,6 +208,7 @@ class Corpus:
             words.append(words_list[begin:end])
             begin = begin + 1
             end = end + 1
+        # <class 'list'>: [['<BOS>', '新', '华'], ['新', '华', '社'], ['华', '社', '北'], ['社', '北', '京'],...,[]]
         return words
 
     @classmethod
@@ -214,10 +216,13 @@ class Corpus:
         """
         特征选取
         """
+        # word_grams <class 'list'>: [[['<BOS>', '新', '华'], ['新', '华', '社'], ['华', '社', '北'], ['社', '北', '京'],
+        # ['北', '京', '十'], ['京', '十', '二'], ['十', '二', '月'], ['二', '月', '三'], ['月', '三', '十'],
         features, feature_list = [], []
         for index in range(len(word_grams)):
             for i in range(len(word_grams[index])):
                 word_gram = word_grams[index][i]
+                # {'bias': 1.0, 'w-1': '<BOS>', 'w': '新', 'w+1': '华', 'w-1:w': '<BOS>新', 'w:w+1': '新华'}
                 feature = {u'w-1': word_gram[0], u'w': word_gram[1], u'w+1': word_gram[2],
                            u'w-1:w': word_gram[0] + word_gram[1], u'w:w+1': word_gram[1] + word_gram[2],
                            # u'p-1': cls.pos_seq[index][i], u'p': cls.pos_seq[index][i+1],
@@ -225,6 +230,8 @@ class Corpus:
                            # u'p-1:p': cls.pos_seq[index][i]+cls.pos_seq[index][i+1],
                            # u'p:p+1': cls.pos_seq[index][i+1]+cls.pos_seq[index][i+2],
                            u'bias': 1.0}
+                # <class 'list'>: [{'bias': 1.0, 'w-1': '<BOS>', 'w': '新', 'w+1': '华', 'w-1:w': '<BOS>新', 'w:w+1': '新华'},
+                #  {'bias': 1.0, 'w-1': '新', 'w': '华', 'w+1': '社', 'w-1:w': '新华', 'w:w+1': '华社'}]
                 feature_list.append(feature)
             features.append(feature_list)
             feature_list = []
@@ -233,10 +240,9 @@ class Corpus:
     @classmethod
     def generator(cls):
         """
-        训练数据
+        生成训练数据
         """
         word_grams = [cls.segment_by_window(word_list) for word_list in cls.word_seq]
-        print(word_grams)
         features = cls.extract_feature(word_grams)
         return features, cls.tag_seq
 

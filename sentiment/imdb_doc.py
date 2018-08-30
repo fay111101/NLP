@@ -5,12 +5,13 @@
 @Author  : fay
 @Email   : fay625@sina.cn
 @File    : imdb_doc.py
-@Software: PyCharm gensim 3.5.0
+@Software: PyCharm gensim 3.5.0 python3.5
 """
 '''
 https://github.com/keras-team/keras/blob/master/examples/imdb_doc.py
 https://blog.csdn.net/walker_hao/article/details/78995591
-data:http://www.cs.cornell.edu/people/pabo/movie-review-data/
+data:
+http://www.cs.cornell.edu/people/pabo/movie-review-data/
 '''
 import logging
 import os
@@ -23,20 +24,16 @@ from gensim.models import Doc2Vec
 from gensim.models.doc2vec import TaggedDocument
 from sklearn.linear_model import LogisticRegression
 
-# code from the tutorial of the python model logging.
-# create a logger, the same name corresponding to the same logger.
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
-# create console handler and set level to info
 ch = logging.StreamHandler(sys.stdout)
 ch.setLevel(logging.INFO)
-
-# create formatter and add formatter to ch
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
+logger.addHandler(ch)
 
-logger.addHandler(ch)  # add ch to the logger
+
+
 pos_corpus_dir = "./corpus/aclImdb/{}/pos/"
 neg_corpus_dir = './corpus/aclImdb/{}/neg/'
 unsup_corpus_dir = './corpus/aclImdb/{}/'
@@ -46,7 +43,7 @@ unsup = './corpus/aclImdb/alldata/train-unsup.txt'
 corpus_path = './corpus/aclImdb/alldata/'
 
 
-## the code for the doc2vec
+
 class TaggedLineSentence(object):
     """
     sources: [file1 name: tag1 name, file2 name: tag2 name ...]
@@ -92,10 +89,14 @@ class TaggedLineSentence(object):
                 neg_reviews.write(''.join(f.readlines()) + '\n')
 
     def to_array(self):
+        """
+
+        :return:
+        """
         self.sentences = []
 
         for source, prefix in self.sources.items():
-            print(source)
+            # print(source)
             # 对每一个
             with utils.smart_open(corpus_path + source) as fin:
                 for item_no, line in enumerate(fin):
@@ -105,7 +106,6 @@ class TaggedLineSentence(object):
                                                          [prefix + '_%s' % item_no]))
         # print(self.sentences)
         '''
-
           [
           TaggedDocument(words=['i', 'must', 'admit', 'i', 'do', 'not', 'hold', 'much', 'of', 'new', 'age', 'mumbo', 'jumbo', '.', 
           'when', 'people', '"exchange', 'energy"', 'i', 'always', 'wonder', 'how', 'much', 'kj', 'is', 'actually', 'exchanged', 'and', 
@@ -113,20 +113,13 @@ class TaggedLineSentence(object):
                    '.', 'if', 'you', 'want', 'to', 'have', 'a', 'good', 'time', 'and', 'have', 'to', 'choose', 'between', 'this',
           'movie', 'and', 'sticking',            'safety', 'pins', 'in', 'your', 'eyelids', ',', 'take', 'my', 'advise', ':', 
           'choose', 'the', 'latter', '.'], tags=['TRAIN_POS_19520']), 
-
-          TaggedDocument(words=['philo', 'vance', '(', 'william', 'powell', ')', 'helps', 'solve', 'multiple', 'murders', 'among', 
-          'the', 'wealthy', 'after',            'a', 'dog', 'show', '.', 'usually', 'i', 'hate', 'overly', 'convoluted', 'mysteries', 
-          '(', 'like', 'this', ')',       'but', 'i', 'love', 'this', 'movie', '.', 'good', 'actor', 'with', 'a', 'very', 'distinctive',
-           'voice', 'and', 'some', 'of', 'his', 'lines', 'were', 'hilarious', '.', 'basically', ',', 'an', 'excellent', '1930s', 'hollywood',
-            'murder', 'mystery', '.', 'well', 'worth', 'seeing', '.'], tags=['TRAIN_POS_19521'])]
-
         '''
-
         return self.sentences
+
 
 def perm(sentences):
     shuffled = list(sentences)
-    random.shuffle(shuffled)  # Note that this line does not return anything.
+    random.shuffle(shuffled)
     return shuffled
 
 
@@ -139,18 +132,20 @@ def get_dataset():
 
 
 def train_vector():
+    """
+
+    :return:
+    """
     sentences = get_dataset()
     # set the parameter and get a model.
     # by default dm=1, PV-DM is used. Otherwise, PV-DBOW is employed.
     model = Doc2Vec(min_count=1, window=10, size=100,
                     sample=1e-4, negative=5, dm=1, workers=7)
-    # print(type(sentences))
     model.build_vocab(sentences)
 
-    # train the model
+
     for epoch in range(20):
         logger.info('epoch %d' % epoch)
-        # total_examples
         model.train(perm(sentences),
                     total_examples=model.corpus_count,
                     epochs=model.iter
@@ -160,7 +155,10 @@ def train_vector():
 
 
 def get_vector():
-    # load and test the model
+    """
+
+    :return:
+    """
     logger.info('model loaded')
     model = Doc2Vec.load('./model/imdb.d2v')
 
@@ -209,7 +207,6 @@ def get_similar():
     model_dm = Doc2Vec.load('./model/imdb.d2v')
     test_text = ['I', 'think', 'this movie', 'is', 'not good', '!']
     inferred_vector_dm = model_dm.infer_vector(test_text)
-    # print(inferred_vector_dm)
     sims = model_dm.docvecs.most_similar([inferred_vector_dm], topn=10)
     return sims
 

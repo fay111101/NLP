@@ -8,18 +8,18 @@
 @Software: PyCharm
 """
 import numpy as np
+from corpus import get_corpus
 from hmmlearn.hmm import MultinomialHMM
-from .calculatecorpus import get_corpus
+
 """
 hmmlearn学习
 https://www.cnblogs.com/pinard/p/7001397.html
 """
 
-__model=None
+__model = None
+
 
 class Segment:
-
-
 
     def __init__(self):
         self.corpus = get_corpus()
@@ -31,6 +31,7 @@ class Segment:
     def get_init_state(self):
         """
         获取初始概率，转为hmm模型接受数据形式
+        标签策略使用SBME体系
         """
         states = ['S', 'B', 'M', 'E']
         init_state = self.corpus.get_state('init')
@@ -74,7 +75,7 @@ class Segment:
         if word in self.vocabs:
             return self.vocabs.index(word)
         else:
-            return len(self.vocabs)-1
+            return len(self.vocabs) - 1
 
     def cut(self, sentence):
         """
@@ -86,7 +87,7 @@ class Segment:
         cut_sentence = ''
         for index in range(len(states)):
             if states[index] in ('S', 'E'):
-                cut_sentence += sentence[index]+' '
+                cut_sentence += sentence[index] + ' '
             else:
                 cut_sentence += sentence[index]
         print(cut_sentence)
@@ -108,9 +109,9 @@ class Segment:
             for word in cut_sentence:
                 if word in gold_sentence:
                     success_count += 1
-        recall = float(success_count)/float(gold_count)
-        precision = float(success_count)/float(cut_count)
-        f1 = (2*recall*precision)/(recall+precision)
+        recall = float(success_count) / float(gold_count)
+        precision = float(success_count) / float(cut_count)
+        f1 = (2 * recall * precision) / (recall + precision)
         return [precision, recall, f1]
 
     def test(self):
@@ -118,7 +119,8 @@ class Segment:
         分词测试
         """
         test_corpus = self.corpus.get_test_corpus('test')
-        gold_corpus = [sentence.replace('  ', ' ').strip() for sentence in self.corpus.get_test_corpus('test_gold') if sentence]
+        gold_corpus = [sentence.replace('  ', ' ').strip() for sentence in self.corpus.get_test_corpus('test_gold') if
+                       sentence]
         cut_corpus = [self.cut(sentence).strip() for sentence in test_corpus if sentence]
         result = self.stats(cut_corpus, gold_corpus)
         print(result)
@@ -134,3 +136,8 @@ def get_model():
     if not __model:
         __model = Segment()
     return __model
+
+
+if __name__ == '__main__':
+    model=get_model()
+    model.test()

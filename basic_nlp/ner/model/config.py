@@ -12,7 +12,7 @@ from configparser import ConfigParser
 __config = None
 
 
-def get_config(config_file_path='/home/fxh/PycharmProjects/NLP-practice/basic_nlp/ner/model/conf/config.conf'):
+def get_config(config_file_path='./conf/config.conf'):
     """
     单例模式实现
     :param config_file_path:
@@ -39,58 +39,66 @@ class single_instance(object):
         return cls.__instance
 
 
-class A(object):
-    def __init__(self):
-        print('initA')
-
-    # def __new__(cls, *args, **kwargs):
-    #     print('new')
-    #     return object.__new__(cls, *args, **kwargs)
-
-    def get_object(self):
-        print('ooooA')
+class Singleton(object):
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
+        return cls._instanc
 
 
-class B(A):
-    def __init__(self):
-        print('initB')
 
-    def get_object(self):
-        print('ooooB')
-
-
-class C(A):
-    def __init__(self):
-        print('initC')
-
-    def get_object(self):
-        print('ooooC')
-
-
-class D(B,C):
-    def __init__(self):
-        print('initD')
-
-    def get_object(self):
-        print('ooooD')
-
-if __name__ == '__main__':
-    # obj1=single_instance()
-    # obj2=single_instance()
-    # print(obj1)
-    # print(obj2)
-    a = A()
-    a1 = A()
-    print(a)
-    print(a1)
-
-    b = B()
-    b1 = B()
-    print(b)
-    print(b1)
-
-    c = C()
-    c.get_object()
-
-    d=D()
-    d.get_object()
+# class A(object):
+#     def __init__(self):
+#         print('initA')
+#
+#     # def __new__(cls, *args, **kwargs):
+#     #     print('new')
+#     #     return object.__new__(cls, *args, **kwargs)
+#
+#     def get_object(self):
+#         print('ooooA')
+#
+#
+# class B(A):
+#     def __init__(self):
+#         print('initB')
+#
+#     def get_object(self):
+#         print('ooooB')
+#
+#
+# class C(A):
+#     def __init__(self):
+#         print('initC')
+#
+#     def get_object(self):
+#         print('ooooC')
+#
+#
+# class D(B,C):
+#     def __init__(self):
+#         print('initD')
+#
+#     def get_object(self):
+#         print('ooooD')
+#
+# if __name__ == '__main__':
+#     # obj1=single_instance()
+#     # obj2=single_instance()
+#     # print(obj1)
+#     # print(obj2)
+#     a = A()
+#     a1 = A()
+#     print(a)
+#     print(a1)
+#
+#     b = B()
+#     b1 = B()
+#     print(b)
+#     print(b1)
+#
+#     c = C()
+#     c.get_object()
+#
+#     d=D()
+#     d.get_object()

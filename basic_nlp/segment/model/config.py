@@ -11,7 +11,7 @@ from configparser import ConfigParser
 
 __config=None
 
-def get_config(config_file_path='model/conf/config.conf'):
+def get_config(config_file_path='./conf/config.conf'):
     """
 
     :param config_file_path:
