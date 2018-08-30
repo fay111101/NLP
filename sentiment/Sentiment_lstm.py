@@ -37,7 +37,7 @@ batch_size = 32
 n_epoch = 4
 input_length = 100
 cpu_count = multiprocessing.cpu_count()
-data_path = './corpus/'
+data_path = './data/'
 model_path = './model/'
 
 

@@ -80,6 +80,7 @@ def build_dataset(words, vocabulary_size):
     dictionary = dict()
     for word, _ in count:
         # 为每个单词建立一个索引id
+        print(word)
         dictionary[word] = len(dictionary)
     data = list()
     unk_count = 0
@@ -167,7 +168,7 @@ with graph.as_default():
     train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
     valid_dataset = tf.constant(valid_examples, dtype=tf.int32)
 
-    with tf.device('/gpu:0'):
+    with tf.device('/cpu:0'):
         # Look up embeddings for inputs.
         embeddings = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0))
         embed = tf.nn.embedding_lookup(embeddings, train_inputs)
