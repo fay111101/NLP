@@ -53,6 +53,9 @@ def baseline():
 #     0.77
 
 
+def build_sentence_vector(sentence,n_dim,w2v):
+    pass
+
 def get_train_vecs(x_train, x_test):
     """
 
